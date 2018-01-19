@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+<head>
+    <meta charset="UTF-8">
+    <title>用户登录</title>
+    <!--文档 http://www.materialscss.com -->
+    <link rel="stylesheet" href="css/materialize.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="css/myCSS.css">
+    <!--Import jQuery before materialize.js-->
+    <script type="text/javascript" src="js/jquery-3.2.1.js"></script>
+    <script type="text/javascript" src="js/materialize.js"></script>
+</head>
+<body background="img/login_background.png">
+<div class="row">
+
+    <div class="card white" style="margin: 7% 31.5%; padding-bottom: 152px; padding-left: 16px;padding-right: 16px;">
+        <div class="card-content black-text">
+            <p class="card-title">登录</p>
+            <form action="#">
+                <p>
+                    <input name="userType" type="radio" id="client" class="blue"/>
+                    <label for="client">客户</label>
+                </p>
+                <p>
+                    <input name="userType" type="radio" id="service"/>
+                    <label for="service">客服</label>
+                </p>
+            </form>
+            <div class="row">
+                <div class="input-field s12">
+                    <input id="id" type="text" class="validate">
+                    <label for="id">帐号</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field s12">
+                    <input id="password" type="password" class="validate">
+                    <label for="password">密码</label>
+                </div>
+            </div>
+            <a>忘记了密码？</a>
+            <a href="GroupChat.html" class="waves-effect waves-light btn blue right">登录</a>
+        </div>
+    </div>
+
+    <script>
+
+    </script>
+
+</div>
+</body>
+</html>
