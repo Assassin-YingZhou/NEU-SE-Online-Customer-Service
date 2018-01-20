@@ -56,17 +56,22 @@ public class ChatAnnotation {
                 {
                     newClient.setMyService(yourService); // 设置该客户的客服
                     yourService.getMyClients().add(newClient); // 设置客服的客户列表
+                    services.remove(yourService);
+                    services.add(yourService);// 重新建堆
                     unicast("2", yourService.getNickname(), nickname, LocalDateTime.now(), 0);   // 向客户反馈客服信息，并告知客服有新客户
                 }
             } else if (content.equals("1")) // 客服上线
             {
                 Service newService = new Service(nickname);
-                services.add(newService);
                 for (Client c : clients) {
                     if (c.getMyService() == null) // 如果有客户一直在等待客服上线
                     {
+                        c.setMyService(newService);
+                        newService.getMyClients().add(c);
+                        unicast("2", newService.getNickname(), c.getNickname(), LocalDateTime.now(), 0);
                     }
                 }
+                services.add(newService);
             }
         } else if (msgType == 1) // 普通消息
         {
@@ -91,8 +96,12 @@ public class ChatAnnotation {
         for (Client c : clients) {
             if (c.getNickname().equals(nickname)) // 离线的是客户
             {
-                c.getMyService().getMyClients().remove(c);      // 删除其客服的客户列表中的一项
-                unicast("0", c.getNickname(), c.getMyService().getNickname(), LocalDateTime.now(), 2);
+                if (c.getMyService() != null) {
+                    c.getMyService().getMyClients().remove(c); // 删除其客服的客户列表中的一项
+                    unicast("0", c.getNickname(), c.getMyService().getNickname(), LocalDateTime.now(), 2);
+                    services.remove(c.getMyService());
+                    services.add(c.getMyService()); // 重新建堆
+                }
                 clients.remove(c);// 删除客户列表中的一项
                 break;
             }
@@ -101,21 +110,24 @@ public class ChatAnnotation {
         for (Service s : services) {
             if (s.getNickname().equals(nickname)) // 离线的是客服
             {
+                services.remove(s);     // 删除客服列表中的一项
                 if (s.getMyClients().size() != 0) {
                     for (Client client : s.getMyClients()) {
                         Service newService = services.peek();   // 为该客服的客户重新分配客服
                         if (newService == null)// 没有其他客服在线
                         {
+                            client.setMyService(null);
                             unicast("3", s.getNickname(), client.getNickname(), LocalDateTime.now(), 2);
                         } else // 获得一个新客服
                         {
                             client.setMyService(newService); // 设置该客户的客服
                             newService.getMyClients().add(client); // 设置客服的客户列表
-                            unicast("2", newService.getNickname(), nickname, LocalDateTime.now(), 0);   // 告知客户已更换客服，告知新客服有新客户
+                            services.remove(newService);
+                            services.add(newService);// 重新建堆
+                            unicast("2", newService.getNickname(), client.getNickname(), LocalDateTime.now(), 0);   // 告知客户已更换客服，告知新客服有新客户
                         }
                     }
                 }
-                services.remove(s);     // 删除客服列表中的一项
                 break;
             }
         }
@@ -140,7 +152,7 @@ public class ChatAnnotation {
                 synchronized (recvChat) {
                     recvChat.session.getBasicRemote().sendText(msgToJson); // 向接收方发送消息
                 }
-            if (sendChat != null)
+            if (sendChat != null && type != 2)
                 synchronized (sendChat) {
                     sendChat.session.getBasicRemote().sendText(msgToJson); // 发送方也需要收到自己发出的消息
                 }
