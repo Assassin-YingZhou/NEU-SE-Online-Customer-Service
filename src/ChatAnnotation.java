@@ -42,7 +42,7 @@ public class ChatAnnotation {
         Message comingMsg = gson.fromJson(Msg, Message.class);
         int msgType = comingMsg.getType(); // 消息类型
         String content = comingMsg.getContent(); // 消息内容
-        if (msgType == 0)// 上线消息
+        if (msgType == 0) // 上线消息
         {
             if (content.equals("0")) // 客户上线
             {
@@ -62,6 +62,11 @@ public class ChatAnnotation {
             {
                 Service newService = new Service(nickname);
                 services.add(newService);
+                for (Client c : clients) {
+                    if (c.getMyService() == null) // 如果有客户一直在等待客服上线
+                    {
+                    }
+                }
             }
         } else if (msgType == 1) // 普通消息
         {
@@ -86,8 +91,8 @@ public class ChatAnnotation {
         for (Client c : clients) {
             if (c.getNickname().equals(nickname)) // 离线的是客户
             {
-                // 删除其客服的客户列表中的一项
-                c.getMyService();
+                c.getMyService().getMyClients().remove(c);      // 删除其客服的客户列表中的一项
+                unicast("0", c.getNickname(), c.getMyService().getNickname(), LocalDateTime.now(), 2);
                 clients.remove(c);// 删除客户列表中的一项
                 break;
             }
@@ -98,8 +103,16 @@ public class ChatAnnotation {
             {
                 if (s.getMyClients().size() != 0) {
                     for (Client client : s.getMyClients()) {
-                        client.setMyService(services.peek()); // 为该客服的客户重新分配客服
-                        // 告知客户已更换客服
+                        Service newService = services.peek();   // 为该客服的客户重新分配客服
+                        if (newService == null)// 没有其他客服在线
+                        {
+                            unicast("3", s.getNickname(), client.getNickname(), LocalDateTime.now(), 2);
+                        } else // 获得一个新客服
+                        {
+                            client.setMyService(newService); // 设置该客户的客服
+                            newService.getMyClients().add(client); // 设置客服的客户列表
+                            unicast("2", newService.getNickname(), nickname, LocalDateTime.now(), 0);   // 告知客户已更换客服，告知新客服有新客户
+                        }
                     }
                 }
                 services.remove(s);     // 删除客服列表中的一项

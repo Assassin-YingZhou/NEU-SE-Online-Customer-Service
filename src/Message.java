@@ -20,13 +20,14 @@ public class Message {
            content=0，客户端通知服务器 客户上线
            content=1，客户端通知服务器 客服上线
            content=2，服务器通知客户端 已为新客户分配客服；sender=客服；receiver=客户
-           content=3，服务器通知客户端 没有客服在线；receiver=客户
+           content=3，服务器通知客户的客户端 没有客服在线；receiver=客户
 
        type=1 普通消息
            content=消息内容，客户端应直接显示content
 
        type=2 离线通知
-           content
+           content=0，服务器通知客服的客户端，有客户离线；sender=离线客户；receiver=接收的客服
+           content=3，服务器通知客户的客户端，没有客服在线；sender=离线客服；receiver=客户
 
         */
 

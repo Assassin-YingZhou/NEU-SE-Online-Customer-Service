@@ -108,16 +108,17 @@
                 {
                     Console.log(Message.content); // 接收窗口直接显示聊天信息
                 }
-                else if (Message.type === 2) // 客户离线，在线列表删除一项
+                else if (Message.type === 2) // 离线通知
                 {
-                    Console.log(Message.content); // 接收窗口显示离线信息
-                    var offlineUser = document.getElementById('user' + Message.sender);
-                    var parent = offlineUser.parentElement;
-                    parent.removeChild(offlineUser);
-                }
-                else if (Message.type === 3) // 刚上线时，服务器发来在线列表
-                {
-
+                    if (Message.content === "0") // 客户离线，在线列表删除一项
+                        Console.log("客户 " + Message.sender + " 已离线"); // 接收窗口显示离线信息
+                    if (receiver === Message.sender) {
+                        receiver = "";
+                        document.getElementById("chatTitle").innerText = "客户 " + Message.sender + " 已离线";
+                    }
+                    var offlineClient = document.getElementById('client' + Message.sender);
+                        var parent = offlineClient.parentElement;
+                        parent.removeChild(offlineClient);
                 }
             };
         });

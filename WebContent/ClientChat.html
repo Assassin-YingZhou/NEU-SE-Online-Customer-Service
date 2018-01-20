@@ -95,10 +95,12 @@
             }
             else if (Message.type === 2) // 离线通知
             {
-                Console.log(Message.content); // 接收窗口显示离线信息
-                var offlineUser = document.getElementById('user' + Message.sender);
-                var parent = offlineUser.parentElement;
-                parent.removeChild(offlineUser);
+                if (Message.content === "3") // 无客服在线
+                {
+                    receiver = "";
+                    document.getElementById('chatTitle').innerText = "等待客服上线";
+                }
+                Console.log("客服 " + Message.sender + " 已离线"); // 接收窗口显示离线信息
             }
         };
     });
