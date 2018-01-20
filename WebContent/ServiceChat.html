@@ -2,7 +2,7 @@
 <html lang="zh-cmn-Hans">
 <head>
     <meta charset="UTF-8">
-    <title>MyMessage</title>
+    <title>在线客服 - 客服</title>
     <!--文档 http://www.materialscss.com -->
     <link rel="stylesheet" href="css/materialize.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
@@ -16,9 +16,9 @@
 <nav>
     <div class="nav-wrapper white">
         <a href="#" class="brand-logo black-text"
-           style="font-size:28px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MyMessage</a>
+           style="font-size:28px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在线客服</a>
         <ul id="nav-mobile" class="right hide-on-med-and-down">
-            <li><a class="black-text">20165248@stu.neu.edu.cn</a></li>
+            <li><a class="black-text"></a></li>
             <li><a href="login.html"><i class="material-icons black-text" style="vertical-align:bottom;">exit_to_app</i></a>
         </ul>
     </div>
@@ -26,38 +26,15 @@
 
 <!-- Page Layout here -->
 <div class="row">
-    <div class="col s12 m4 l3" style="padding: 20px 11.25px"> <!-- Note that "m4 l3" was added -->
-        <!-- Grey navigation panel
-
-        This content will be:
-        3-columns-wide on large screens,
-        4-columns-wide on medium screens,
-        12-columns-wide on small screens  -->
-
-        <div style="border: 0;" class="collection" id="menulist">
-            <a style="border: 0; " class="collection-item grey lighten-4 grey-text hoverable" onclick="goGroup()"><i
-                    class="material-icons "
-                    style="vertical-align:bottom">group</i>&nbsp;&nbsp;我的群组</a>
-            <a style="border: 0; " class="collection-item grey lighten-4 grey-text hoverable" onclick="goService()"><i
-                    class="material-icons "
-                    style="vertical-align:bottom">question_answer</i>&nbsp;&nbsp;在线客服</a>
-            <a style="border: 0; " class="collection-item grey lighten-4 grey-text"><i
-                    class="material-icons"
-                    style="vertical-align:bottom">person</i>&nbsp;&nbsp;在线用户</a>
-            <div id="onlineList" style="padding: 0 18px;">
-                <!--在线用户列表-->
-            </div>
+    <div class="col s12 m4 l3" style="padding: 20px 11.25px">
+        <div style="border: 0;">
+            <ul id="clientList" class="collection">
+                <!--所有在线客户列表-->
+            </ul>
         </div>
     </div>
 
-    <div class="col s12 m8 l9" style="padding: 20px 11.25px;"> <!-- Note that "m8 l9" was added -->
-        <!-- Teal page content
-
-        This content will be:
-        9-columns-wide on large screens,
-        8-columns-wide on medium screens,
-        12-columns-wide on small screens  -->
-
+    <div class="col s12 m8 l9" style="padding: 20px 11.25px;">
         <div class="input-field col s12">
             <!--接收窗口-->
             <h5 id="chatTitle">离线</h5>
@@ -165,13 +142,6 @@
 
     <script type="text/javascript" language="javascript">
         var receiver = "";
-
-        function goGroup() {
-            document.getElementById("chatTitle").innerText = "我的群组";
-            receiver = "group";
-        }
-
-        goGroup();// 打开页面后自动执行!
 
         $(document).on("click", "button", function () {
             receiver = this.id.substring(4);

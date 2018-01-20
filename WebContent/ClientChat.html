@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+<head>
+    <meta charset="UTF-8">
+    <title>在线客服 - 客户</title>
+    <!--文档 http://www.materialscss.com -->
+    <link rel="stylesheet" href="css/materialize.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="css/myCSS.css">
+    <!--Import jQuery before materialize.js-->
+    <script type="text/javascript" src="js/jquery-3.2.1.js"></script>
+    <script type="text/javascript" src="js/materialize.js"></script>
+</head>
+
+<body class="grey lighten-4">
+<nav>
+    <div class="nav-wrapper white">
+        <a href="#" class="brand-logo black-text"
+           style="font-size:28px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在线客服</a>
+        <ul id="nav-mobile" class="right hide-on-med-and-down">
+            <li><a class="black-text" id="username"></a></li>
+            <li><a href="login.html"><i class="material-icons black-text" style="vertical-align:bottom;">exit_to_app</i></a>
+        </ul>
+    </div>
+</nav>
+
+
+<div class="container" style="padding: 20px 11.25px;">
+    <div class="input-field col s12">
+        <!--接收窗口-->
+        <h5 id="chatTitle">离线</h5>
+        <textarea disabled id="recvText" class="materialize-textarea black-text" type="text"
+                  style="overflow: auto; height: 320px;" placeholder="暂无信息"></textarea>
+    </div>
+
+    <div class="input-field col s12">
+        <!--发送窗口-->
+        <i class="material-icons prefix">mode_edit</i>
+        <input placeholder="键入并按Enter发送" id="sendText" type="text" class="validate">
+    </div>
+</div>
+
+<script type="application/javascript">
+    var ClientChat = {};
+    ClientChat.socket = null;
+    ClientChat.connect = (function (host) { // 连接操作
+        if ('WebSocket' in window) {
+            ClientChat.socket = new WebSocket(host);
+        } else if ('MozWebSocket' in window) {
+            ClientChat.socket = new MozWebSocket(host);
+        }
+        else {
+            Console.log('错误：您的浏览器不支持 WebSocket');
+            return;
+        }
+
+        ClientChat.socket.onopen = function () { // 连接开启时
+            Console.log('信息：连接已建立');
+            var openMessage = {"type": "0", "content": "0"};
+            var openJson = JSON.stringify(openMessage);
+            ClientChat.socket.send(openJson); // 连接开启后发送上线信息
+            document.getElementById('sendText').onkeydown = function (event) {
+                if (event.keyCode === 13)
+                    ClientChat.sendMessage();
+            };
+        };
+
+        ClientChat.socket.onclose = function () { // 连接断开时
+            document.getElementById('chatTitle').innerText = "离线";
+            document.getElementById('sendText').onkeydown = null;
+            Console.log('信息：连接已断开');
+        };
+
+        ClientChat.socket.onmessage = function (message) { // 消息到达时
+            var Message = JSON.parse(message.data);
+            if (Message.type === 0) // 用户上线，在线列表新增一项
+            {
+                Console.log(Message.content); // 接收窗口显示上线信息
+                document.getElementById('onlineList').innerHTML += "" +
+                    "<button class='btn waves-effect waves-light grey' id='user" + Message.sender + "'>" + Message.sender + "</button>";
+            }
+            else if (Message.type === 1) {
+                Console.log(Message.content); // 接收窗口直接显示聊天信息
+            }
+            else if (Message.type === 2) // 用户离线，在线列表删除一项
+            {
+                Console.log(Message.content); // 接收窗口显示离线信息
+                var offlineUser = document.getElementById('user' + Message.sender);
+                var parent = offlineUser.parentElement;
+                parent.removeChild(offlineUser);
+            }
+            else if (Message.type === 3) // 刚上线时，服务器发来在线列表
+            {
+                var me = Message.receiver;
+                document.getElementById('onlineList').innerHTML = "";
+                var list = JSON.parse(Message.content);
+                for (var i in list) {
+                    if (list[i] !== me) {
+                        document.getElementById('onlineList').innerHTML += "" +
+                            "<button class='btn waves-effect waves-light grey' id='user" + list[i] + "'>" + list[i] + "</button>";
+                    }
+                }
+            }
+        };
+    });
+
+    ClientChat.initialize = function () { // 初始化，建立WebSocket连接
+        if (window.location.protocol === 'http:') {
+            ClientChat.connect('ws://' + window.location.host + '/ChatSocket');
+        } else {
+            ClientChat.connect('wss://' + window.location.host + '/ChatSocket');
+        }
+    };
+
+    ClientChat.sendMessage = (function () { // 发送消息
+        var content = document.getElementById("sendText").value; // 发送框中的消息内容
+        if (content !== '') {
+            var Message = {'content': content, 'receiver': receiver};
+            var jsonMessage = JSON.stringify(Message);
+            ClientChat.socket.send(jsonMessage);
+            document.getElementById('sendText').value = '';
+        }
+    });
+
+    var Console = {};
+
+    Console.log = (function (message) { // 接收窗口显示消息
+        var console = document.getElementById("recvText");
+        console.value += message + "\n";
+        $('#recvText').trigger('autoresize');
+    });
+
+    ClientChat.initialize();
+
+</script>
+
+<script type="text/javascript" language="javascript">
+    var receiver = "";
+
+
+    $(document).on("click", "button", function () {
+        receiver = this.id.substring(4);
+        document.getElementById('chatTitle').innerText = "用户" + receiver;
+    });
+
+    function goService() {
+        document.getElementById("chatTitle").innerText = "在线客服";
+        receiver = "service";
+    }
+</script>
+
+</body>
+</html>

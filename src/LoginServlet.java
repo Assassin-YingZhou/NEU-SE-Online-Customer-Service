@@ -13,7 +13,7 @@ public class LoginServlet extends HttpServlet {
         request.getSession().setAttribute("username", username);
         request.getSession().setAttribute("password", password);
         request.getSession().setAttribute("login", true);
-        response.sendRedirect("GroupChat.html");
+        response.sendRedirect("ClientChat.html");
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
