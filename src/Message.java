@@ -11,6 +11,24 @@ public class Message {
     public final static int QUIT = 2; // 离线通知
     public final static int LIST = 3; // 在线列表
 
+    /*
+       *** Message 约定 ***
+
+       ChatAnnotation类的unicast方法不仅会将消息发送给receiver，也会发送给sender.
+
+       type=0 上线通知
+           content=0，客户端通知服务器 客户上线
+           content=1，客户端通知服务器 客服上线
+           content=2，服务器通知客户端 已为新客户分配客服；sender=客服；receiver=客户
+           content=3，服务器通知客户端 没有客服在线；receiver=客户
+
+       type=1 普通消息
+           content=消息内容，客户端应直接显示content
+
+       type=2 离线通知
+           content
+
+        */
 
     public String getSender() {
         return sender;

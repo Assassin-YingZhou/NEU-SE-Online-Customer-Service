@@ -51,13 +51,11 @@ public class ChatAnnotation {
                 Service yourService = services.peek();
                 if (yourService == null)// 没有客服在线
                 {
-
+                    unicast("3", "", nickname, LocalDateTime.now(), 0);
                 } else // 获得一个客服
                 {
-                    newClient.setMyService(yourService);
-                    Message clientLogin = new Message(, nickname);
-                    // 向客户反馈客服信息
-                    // 告知客服有新客户
+                    newClient.setMyService(yourService); // 设置该客户的客服
+                    unicast("2", yourService.getNickname(), nickname, LocalDateTime.now(), 0);   // 向客户反馈客服信息，并告知客服有新客户
                 }
             } else if (content.equals("1")) // 客服上线
             {
@@ -114,12 +112,14 @@ public class ChatAnnotation {
         ChatAnnotation recvChat = connections.get(receiver);
         ChatAnnotation sendChat = connections.get(sender);
         try {
-            synchronized (recvChat) {
-                recvChat.session.getBasicRemote().sendText(msgToJson); // 向接收方发送消息
-            }
-            synchronized (sendChat) {
-                sendChat.session.getBasicRemote().sendText(msgToJson); // 发送方也需要收到自己发出的消息
-            }
+            if (receiver != null)
+                synchronized (recvChat) {
+                    recvChat.session.getBasicRemote().sendText(msgToJson); // 向接收方发送消息
+                }
+            if (sendChat != null)
+                synchronized (sendChat) {
+                    sendChat.session.getBasicRemote().sendText(msgToJson); // 发送方也需要收到自己发出的消息
+                }
         } catch (IOException e) {
             connections.remove(recvChat);
             try {

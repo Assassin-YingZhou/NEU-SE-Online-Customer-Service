@@ -41,7 +41,9 @@
 </div>
 
 <script type="application/javascript">
+    var receiver = ""; // 接收消息的客服
     var ClientChat = {};
+
     ClientChat.socket = null;
     ClientChat.connect = (function (host) { // 连接操作
         if ('WebSocket' in window) {
@@ -73,33 +75,28 @@
 
         ClientChat.socket.onmessage = function (message) { // 消息到达时
             var Message = JSON.parse(message.data);
-            if (Message.type === 0) // 用户上线，在线列表新增一项
+            if (Message.type === 0) // 上线通知
             {
-                Console.log(Message.content); // 接收窗口显示上线信息
-                document.getElementById('onlineList').innerHTML += "" +
-                    "<button class='btn waves-effect waves-light grey' id='user" + Message.sender + "'>" + Message.sender + "</button>";
+                if (Message.content === "2") // 分配到客服
+                {
+                    receiver = Message.sender;
+                    document.getElementById('chatTitle').innerText = "客服 " + receiver;
+                }
+                else if (Message.content === "3") // 无客服在线
+                {
+                    document.getElementById('chatTitle').innerText = "等待客服上线";
+                }
             }
-            else if (Message.type === 1) {
+            else if (Message.type === 1) // 普通消息
+            {
                 Console.log(Message.content); // 接收窗口直接显示聊天信息
             }
-            else if (Message.type === 2) // 用户离线，在线列表删除一项
+            else if (Message.type === 2) // 离线通知
             {
                 Console.log(Message.content); // 接收窗口显示离线信息
                 var offlineUser = document.getElementById('user' + Message.sender);
                 var parent = offlineUser.parentElement;
                 parent.removeChild(offlineUser);
-            }
-            else if (Message.type === 3) // 刚上线时，服务器发来在线列表
-            {
-                var me = Message.receiver;
-                document.getElementById('onlineList').innerHTML = "";
-                var list = JSON.parse(Message.content);
-                for (var i in list) {
-                    if (list[i] !== me) {
-                        document.getElementById('onlineList').innerHTML += "" +
-                            "<button class='btn waves-effect waves-light grey' id='user" + list[i] + "'>" + list[i] + "</button>";
-                    }
-                }
             }
         };
     });
@@ -132,21 +129,6 @@
 
     ClientChat.initialize();
 
-</script>
-
-<script type="text/javascript" language="javascript">
-    var receiver = "";
-
-
-    $(document).on("click", "button", function () {
-        receiver = this.id.substring(4);
-        document.getElementById('chatTitle').innerText = "用户" + receiver;
-    });
-
-    function goService() {
-        document.getElementById("chatTitle").innerText = "在线客服";
-        receiver = "service";
-    }
 </script>
 
 </body>

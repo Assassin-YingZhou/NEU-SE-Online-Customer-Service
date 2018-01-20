@@ -4,70 +4,10 @@
     <facet type="web" name="Web">
       <configuration>
         <descriptors>
-          <deploymentDescriptor name="web.xml" url="file://$MODULE_DIR$/apache-tomcat-8.5.24/webapps/ROOT/WEB-INF/web.xml" />
+          <deploymentDescriptor name="web.xml" url="file://$MODULE_DIR$/WebContent" />
         </descriptors>
         <webroots>
-          <root url="file://$MODULE_DIR$/apache-tomcat-8.5.24/webapps/ROOT" relative="/" />
-        </webroots>
-      </configuration>
-    </facet>
-    <facet type="web" name="Web2">
-      <configuration>
-        <descriptors>
-          <deploymentDescriptor name="web.xml" url="file://$MODULE_DIR$/apache-tomcat-8.5.24/webapps/docs/WEB-INF/web.xml" />
-        </descriptors>
-        <webroots>
-          <root url="file://$MODULE_DIR$/apache-tomcat-8.5.24/webapps/docs" relative="/" />
-        </webroots>
-      </configuration>
-    </facet>
-    <facet type="web" name="Web3">
-      <configuration>
-        <descriptors>
-          <deploymentDescriptor name="web.xml" url="file://$MODULE_DIR$/apache-tomcat-8.5.24/conf/web.xml" />
-        </descriptors>
-        <webroots>
-          <root url="file://$MODULE_DIR$/apache-tomcat-8.5.24/conf" relative="/WEB-INF" />
-        </webroots>
-      </configuration>
-    </facet>
-    <facet type="web" name="Web4">
-      <configuration>
-        <descriptors>
-          <deploymentDescriptor name="web.xml" url="file://$MODULE_DIR$/apache-tomcat-8.5.24/webapps/examples/WEB-INF/web.xml" />
-        </descriptors>
-        <webroots>
-          <root url="file://$MODULE_DIR$/apache-tomcat-8.5.24/webapps/examples" relative="/" />
-        </webroots>
-      </configuration>
-    </facet>
-    <facet type="web" name="Web5">
-      <configuration>
-        <descriptors>
-          <deploymentDescriptor name="web.xml" url="file://$MODULE_DIR$/apache-tomcat-8.5.24/webapps/docs/appdev/sample/web/WEB-INF/web.xml" />
-        </descriptors>
-        <webroots>
-          <root url="file://$MODULE_DIR$/apache-tomcat-8.5.24/webapps/docs/appdev/sample/web" relative="/" />
-        </webroots>
-      </configuration>
-    </facet>
-    <facet type="web" name="Web6">
-      <configuration>
-        <descriptors>
-          <deploymentDescriptor name="web.xml" url="file://$MODULE_DIR$/apache-tomcat-8.5.24/webapps/manager/WEB-INF/web.xml" />
-        </descriptors>
-        <webroots>
-          <root url="file://$MODULE_DIR$/apache-tomcat-8.5.24/webapps/manager" relative="/" />
-        </webroots>
-      </configuration>
-    </facet>
-    <facet type="web" name="Web7">
-      <configuration>
-        <descriptors>
-          <deploymentDescriptor name="web.xml" url="file://$MODULE_DIR$/apache-tomcat-8.5.24/webapps/host-manager/WEB-INF/web.xml" />
-        </descriptors>
-        <webroots>
-          <root url="file://$MODULE_DIR$/apache-tomcat-8.5.24/webapps/host-manager" relative="/" />
+          <root url="file://$MODULE_DIR$/WebContent" relative="/" />
         </webroots>
       </configuration>
     </facet>
