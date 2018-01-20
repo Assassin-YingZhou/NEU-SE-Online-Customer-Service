@@ -23,5 +23,6 @@ public class Service {
     // 构造方法
     public Service(String nickname) {
         this.nickname = nickname;
+        myClients = new ArrayList<>();
     }
 }

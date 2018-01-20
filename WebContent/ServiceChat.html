@@ -55,7 +55,7 @@
 
         $(document).on("click", "li", function () {
             receiver = this.id.substring(6);
-            document.getElementById('chatTitle').innerText = "客户" + receiver;
+            document.getElementById('chatTitle').innerText = "客户 " + receiver;
         });
 
         ServiceChat.socket = null;
@@ -72,6 +72,9 @@
 
             ServiceChat.socket.onopen = function () { // 连接开启时
                 Console.log('信息：连接已建立');
+                if (receiver === "") {
+                    document.getElementById("chatTitle").innerText = "等待客户连接";
+                }
                 var openMessage = {"type": "0", "content": "1"};
                 var openJson = JSON.stringify(openMessage);
                 ServiceChat.socket.send(openJson); // 连接开启后发送上线信息
@@ -85,6 +88,7 @@
                 document.getElementById('chatTitle').innerText = "离线";
                 document.getElementById('sendText').onkeydown = null;
                 Console.log('信息：连接已断开');
+                receiver = "";
             };
 
             ServiceChat.socket.onmessage = function (message) { // 消息到达时
@@ -93,9 +97,10 @@
                     if (Message.content === "2")// 客户上线，在线列表新增一项
                     {
                         receiver = Message.receiver;
-                        Console.log(Message.content); // 接收窗口显示上线信息
+                        Console.log("客户 " + receiver + " 开始与您对话"); // 接收窗口显示上线信息
+                        document.getElementById('chatTitle').innerText = "客户 " + receiver;
                         document.getElementById('clientList').innerHTML += "" +
-                            "<li class='collection-item' id='client" + Message.receiver + "'>客户 " + Message.receiver + "</li>";
+                            "<li class='collection-item grey lighten-5' id='client" + Message.receiver + "'>客户 " + Message.receiver + "</li>";
                     }
 
                 }
@@ -112,15 +117,7 @@
                 }
                 else if (Message.type === 3) // 刚上线时，服务器发来在线列表
                 {
-                    var me = Message.receiver;
-                    document.getElementById('clientList').innerHTML = "";
-                    var list = JSON.parse(Message.content);
-                    for (var i in list) {
-                        if (list[i] !== me) {
-                            document.getElementById('clientList').innerHTML += "" +
-                                "<button class='btn waves-effect waves-light grey' id='user" + list[i] + "'>" + list[i] + "</button>";
-                        }
-                    }
+
                 }
             };
         });
@@ -136,7 +133,7 @@
         ServiceChat.sendMessage = (function () { // 发送消息
             var content = document.getElementById("sendText").value; // 发送框中的消息内容
             if (content !== '') {
-                var Message = {'content': content, 'receiver': receiver};
+                var Message = {'content': content, 'receiver': receiver, 'type': 1};
                 var jsonMessage = JSON.stringify(Message);
                 ServiceChat.socket.send(jsonMessage);
                 document.getElementById('sendText').value = '';

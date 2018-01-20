@@ -71,6 +71,7 @@
             document.getElementById('chatTitle').innerText = "离线";
             document.getElementById('sendText').onkeydown = null;
             Console.log('信息：连接已断开');
+            receiver = "";
         };
 
         ClientChat.socket.onmessage = function (message) { // 消息到达时
@@ -84,6 +85,7 @@
                 }
                 else if (Message.content === "3") // 无客服在线
                 {
+                    receiver = "";
                     document.getElementById('chatTitle').innerText = "等待客服上线";
                 }
             }
@@ -112,7 +114,7 @@
     ClientChat.sendMessage = (function () { // 发送消息
         var content = document.getElementById("sendText").value; // 发送框中的消息内容
         if (content !== '') {
-            var Message = {'content': content, 'receiver': receiver};
+            var Message = {'content': content, 'receiver': receiver, 'type': 1};
             var jsonMessage = JSON.stringify(Message);
             ClientChat.socket.send(jsonMessage);
             document.getElementById('sendText').value = '';
