@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement />
+  <nodes>
+    <node x="0.0" y="151.0">Message</node>
+    <node x="416.17968750000006" y="0.0">Service</node>
+    <node x="384.0" y="232.0">Client</node>
+    <node x="276.97829861111114" y="484.0">ChatAnnotation</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="ChatAnnotation" target="Service">
+      <point x="41.77777777777777" y="-177.0" />
+      <point x="506.7560763888889" y="454.0" />
+      <point x="551.5" y="454.0" />
+      <point x="551.5" y="131.0" />
+      <point x="535.9921875" y="131.0" />
+      <point x="13.3125" y="50.5" />
+    </edge>
+    <edge source="Service" target="Client">
+      <point x="-39.9375" y="50.5" />
+      <point x="19.625" y="-50.5" />
+    </edge>
+    <edge source="ChatAnnotation" target="Message">
+      <point x="-125.33333333333331" y="-177.0" />
+      <point x="339.6449652777778" y="454.0" />
+      <point x="273.0" y="454.0" />
+      <point x="91.0" y="131.5" />
+    </edge>
+    <edge source="Client" target="Service">
+      <point x="-58.875" y="-50.5" />
+      <point x="403.625" y="131.0" />
+      <point x="429.49218750000006" y="131.0" />
+      <point x="-93.1875" y="50.5" />
+    </edge>
+    <edge source="ChatAnnotation" target="Client">
+      <point x="-41.77777777777774" y="-177.0" />
+      <point x="423.20052083333337" y="434.0" />
+      <point x="462.5" y="434.0" />
+      <point x="0.0" y="50.5" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Group" zoom="1.0" x="266.5" y="133.0" />
+  <SelectedNodes />
+  <Categories>
+    <Category>Fields</Category>
+    <Category>Constructors</Category>
+    <Category>Methods</Category>
+    <Category>Inner Classes</Category>
+    <Category>Properties</Category>
+  </Categories>
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+
