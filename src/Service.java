@@ -1,3 +1,10 @@
+/**
+ * 客服信息
+ *
+ * @author 舒意恒
+ * @see Client
+ */
+
 import java.util.ArrayList;
 
 public class Service {

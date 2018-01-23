@@ -1,3 +1,9 @@
+/**
+ * 客户信息
+ *
+ * @author 舒意恒
+ * @see Service
+ */
 public class Client {
     private String nickname;
     private Service myService;

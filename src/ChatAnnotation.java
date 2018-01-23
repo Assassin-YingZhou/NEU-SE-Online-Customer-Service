@@ -1,3 +1,10 @@
+/**
+ * 在服务器上描述一个客户连接
+ *
+ * @author 舒意恒
+ * @see Message
+ */
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -14,22 +21,15 @@ import java.util.concurrent.PriorityBlockingQueue;
 public class ChatAnnotation {
     private Session session; // 与客户端通信的session
     private String nickname;
-    private int userType;
-    private static final int client = 0; // 客户
-    private static final int service = 1; // 客服
     private static ArrayList<Client> clients = new ArrayList<>(); // 在线客户
-    private static Comparator<Service> serviceComparator = new Comparator<Service>() {
-        @Override // 覆盖比较器
-        public int compare(Service s1, Service s2) {
-            return s1.getMyClients().size() - s2.getMyClients().size(); // 客户数少的客服优先
-        }
-    };
-    private static PriorityBlockingQueue<Service> services = new PriorityBlockingQueue<Service>(5, serviceComparator); // <线程安全的优先级队列>在线客服
+    // 覆盖比较器
+    private static Comparator<Service> serviceComparator = Comparator.comparingInt(s -> s.getMyClients().size());
+    private static PriorityBlockingQueue<Service> services = new PriorityBlockingQueue<>(5, serviceComparator); // <线程安全的优先级队列>在线客服
     private static Hashtable<String, ChatAnnotation> connections = new Hashtable<>();
 
 
     @OnOpen
-    public void start(Session session) throws IOException {
+    public void start(Session session) {
         this.session = session;
         this.nickname = session.getId();
         // 把当前客户端对应的ChatAnnotation对象加入到集合中
@@ -37,7 +37,7 @@ public class ChatAnnotation {
     }
 
     @OnMessage
-    public void incoming(String Msg) throws IOException {
+    public void incoming(String Msg) {
         Gson gson = new Gson();
         Message comingMsg = gson.fromJson(Msg, Message.class);
         int msgType = comingMsg.getType(); // 消息类型
@@ -51,14 +51,14 @@ public class ChatAnnotation {
                 Service yourService = services.peek();
                 if (yourService == null)// 没有客服在线
                 {
-                    unicast("3", "", nickname, LocalDateTime.now(), 0);
+                    unicast("3", "", nickname, LocalDateTime.now(), Message.LOGIN);
                 } else // 获得一个客服
                 {
                     newClient.setMyService(yourService); // 设置该客户的客服
                     yourService.getMyClients().add(newClient); // 设置客服的客户列表
                     services.remove(yourService);
                     services.add(yourService);// 重新建堆
-                    unicast("2", yourService.getNickname(), nickname, LocalDateTime.now(), 0);   // 向客户反馈客服信息，并告知客服有新客户
+                    unicast("2", yourService.getNickname(), nickname, LocalDateTime.now(), Message.LOGIN);   // 向客户反馈客服信息，并告知客服有新客户
                 }
             } else if (content.equals("1")) // 客服上线
             {
@@ -68,7 +68,7 @@ public class ChatAnnotation {
                     {
                         c.setMyService(newService);
                         newService.getMyClients().add(c);
-                        unicast("2", newService.getNickname(), c.getNickname(), LocalDateTime.now(), 0);
+                        unicast("2", newService.getNickname(), c.getNickname(), LocalDateTime.now(), Message.LOGIN);
                     }
                 }
                 services.add(newService);
@@ -87,7 +87,7 @@ public class ChatAnnotation {
                     content = "客服 " + nickname + " ：" + content;
                 }
             }
-            unicast(content, nickname, comingMsg.getReceiver(), LocalDateTime.now(), 1); // 服务器将消息推送给客户和客服的客户端
+            unicast(content, nickname, comingMsg.getReceiver(), LocalDateTime.now(), Message.NORMAL); // 服务器将消息推送给客户和客服的客户端
         }
     }
 
@@ -98,7 +98,7 @@ public class ChatAnnotation {
             {
                 if (c.getMyService() != null) {
                     c.getMyService().getMyClients().remove(c); // 删除其客服的客户列表中的一项
-                    unicast("0", c.getNickname(), c.getMyService().getNickname(), LocalDateTime.now(), 2);
+                    unicast("0", c.getNickname(), c.getMyService().getNickname(), LocalDateTime.now(), Message.QUIT);
                     services.remove(c.getMyService());
                     services.add(c.getMyService()); // 重新建堆
                 }
@@ -117,14 +117,14 @@ public class ChatAnnotation {
                         if (newService == null)// 没有其他客服在线
                         {
                             client.setMyService(null);
-                            unicast("3", s.getNickname(), client.getNickname(), LocalDateTime.now(), 2);
+                            unicast("3", s.getNickname(), client.getNickname(), LocalDateTime.now(), Message.QUIT);
                         } else // 获得一个新客服
                         {
                             client.setMyService(newService); // 设置该客户的客服
                             newService.getMyClients().add(client); // 设置客服的客户列表
                             services.remove(newService);
                             services.add(newService);// 重新建堆
-                            unicast("2", newService.getNickname(), client.getNickname(), LocalDateTime.now(), 0);   // 告知客户已更换客服，告知新客服有新客户
+                            unicast("2", newService.getNickname(), client.getNickname(), LocalDateTime.now(), Message.LOGIN);   // 告知客户已更换客服，告知新客服有新客户
                         }
                     }
                 }
@@ -136,7 +136,7 @@ public class ChatAnnotation {
 
 
     @OnError
-    public void onError(Throwable t) throws Throwable {
+    public void onError(Throwable t) {
         t.printStackTrace();
     }
 
@@ -152,7 +152,7 @@ public class ChatAnnotation {
                 synchronized (recvChat) {
                     recvChat.session.getBasicRemote().sendText(msgToJson); // 向接收方发送消息
                 }
-            if (sendChat != null && type != 2)
+            if (sendChat != null && type != Message.QUIT)
                 synchronized (sendChat) {
                     sendChat.session.getBasicRemote().sendText(msgToJson); // 发送方也需要收到自己发出的消息
                 }
